@@ -1,5 +1,5 @@
 <template>
-	<div class="app-suggestion">
+	<div class="app-suggestion" v-click-outside="handleClickOutside">
 		<label
 			v-if="label"
 			for="search"
@@ -30,8 +30,10 @@
 					tabindex="0"
 					name="search"
 					role="search"
+					:disabled="reachedLimit"
 					:placeholder="placeholder"
 					@input="debounceSearch"
+					@focus="isFocused = true"
 				/>
 			</li>
 		</ul>
@@ -100,6 +102,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const search = ref('');
+const isFocused = ref(false);
 
 const selectedList = defineModel<T[]>({ default: [], required: false });
 const debounceSearch = useDebounce(handleSearch, props.denounce);
@@ -127,8 +130,20 @@ const optionsToDisplay = computed(() => {
 	return formattedOptions.value.filter((opt) => !opt.meta.selected);
 });
 
+const reachedLimit = computed(() => {
+	if (props.max === undefined) return false;
+
+	return selectedList.value.length === props.max;
+});
+
 const displayOptions = computed(() => {
-	return search.value.length >= props.minSearch;
+	if (!isFocused.value) return false;
+
+	if (!reachedLimit.value && search.value.length >= props.minSearch) {
+		return true;
+	}
+
+	return false;
 });
 
 function _checkIsSameOption(opt: T, val: T) {
@@ -168,6 +183,10 @@ function handleRemoveOption(opt: T) {
 	});
 
 	$emit('remove', JSON.parse(JSON.stringify(opt)));
+}
+
+function handleClickOutside() {
+	isFocused.value = false;
 }
 </script>
 
@@ -235,6 +254,7 @@ function handleRemoveOption(opt: T) {
 	-webkit-box-shadow: var(--box-shadow);
 	-moz-box-shadow: var(--box-shadow);
 	box-shadow: var(--box-shadow);
+	z-index: 99;
 }
 
 .suggestion-option {

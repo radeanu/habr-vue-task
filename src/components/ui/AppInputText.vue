@@ -3,17 +3,20 @@
 		class="input-text"
 		type="text"
 		:name="name"
+		:disabled="disabled"
 		:aria-label="placeholder"
 		:placeholder="placeholder"
 		:autocomplete="autocomplete"
 		v-model="model"
 		@update:model-value="handleInput"
+		@focus="handleFocus"
 	/>
 </template>
 
 <script setup lang="ts">
 export type AppInputText = {
 	name?: string;
+	disabled?: boolean;
 	placeholder?: string;
 	autocomplete?: string;
 };
@@ -21,12 +24,17 @@ export type AppInputText = {
 defineProps<AppInputText>();
 const $emit = defineEmits<{
 	(e: 'input', v: string): void;
+	(e: 'focus'): void;
 }>();
 
 const model = defineModel<string>({ required: false });
 
 function handleInput(value: string) {
 	$emit('input', value);
+}
+
+function handleFocus() {
+	$emit('focus');
 }
 </script>
 

@@ -1,7 +1,8 @@
+const PRODUCTS_API_URL = 'https://dummyjson.com/products/search';
 const API_URL = 'https://habr.com/kek/v2/publication/suggest-mention';
 
 import { HTTP_STATUS_ERROR } from '@/common/constants';
-import type { ApiUserOption } from '@/common/model.types';
+import type { ApiProductOption, ApiUserOption } from '@/common/model.types';
 
 export function getRequestErrorMessage(error: unknown): string {
 	if (error instanceof Response) {
@@ -31,6 +32,34 @@ export function useFetchUsers() {
 
 		const jsonData = await res.json();
 		return jsonData?.data ?? [];
+	}
+
+	function cancelIfRunning() {
+		if (controller) {
+			controller.abort();
+		}
+	}
+
+	return { get, cancelIfRunning };
+}
+
+export function useFetchProducts() {
+	let controller: AbortController;
+
+	async function get(search: string): Promise<ApiProductOption[]> {
+		controller = new AbortController();
+
+		const url = new URL(PRODUCTS_API_URL);
+		url.searchParams.append('q', search);
+
+		const res = await fetch(url, { method: 'GET', signal: controller.signal });
+
+		if (!res.ok) {
+			return Promise.reject(res);
+		}
+
+		const jsonData = await res.json();
+		return jsonData?.products ?? [];
 	}
 
 	function cancelIfRunning() {

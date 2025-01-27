@@ -2,11 +2,11 @@
 	<div class="main-page">
 		<AppSuggestion
 			required
-			:max="5"
+			:max="4"
 			:min-search="MIN_SEARCH"
 			v-model="selectedList"
 			:options="usersList"
-			label="Пользователь или компания"
+			label="Пользователь или компания (лимит - 4)"
 			placeholder="Введите логин"
 			track-by="alias"
 			class="suggestion-dropdown"
@@ -31,17 +31,60 @@
 				<UserOption v-bind="option" />
 			</template>
 		</AppSuggestion>
+
+		<br />
+		<br />
+
+		<AppSuggestion
+			:min-search="prodMinSearch"
+			v-model="selProdList"
+			:options="productsList"
+			label="Пример с другим API"
+			track-by="id"
+			class="suggestion-dropdown"
+			@search="prodSearch"
+		>
+			<template #selected-option="{ option }">
+				<span>{{ option.title }}: ${{ option.price }}</span>
+			</template>
+
+			<template #suggestion-before>
+				<div class="fetch-status">
+					<span v-if="prodLoader.isLoading.value && !productsList.length">
+						Загрузка...
+					</span>
+					<span v-else-if="!productsList.length">
+						{{ errorMessage ?? 'Ничего не найдено' }}
+					</span>
+				</div>
+			</template>
+
+			<template #suggestion-option="{ option }">
+				<ProductOption v-bind="option" />
+			</template>
+		</AppSuggestion>
 	</div>
 </template>
 
 <script setup lang="ts">
 import UserOption from '@/components/suggestion/UserOption.vue';
+import ProductOption from '@/components/suggestion/ProductOption.vue';
 
 import AppSuggestion from '@/components/suggestion/AppSuggestion.vue';
-import { useSuggestionsList } from '@/composables/suggestions/useUsersList';
+import { useUsersList } from '@/composables/suggestions/useUsersList';
+import { useProductsList } from '@/composables/suggestions/useProductsList';
 
 const { loader, handleSearch, usersList, selectedList, MIN_SEARCH, errorMessage } =
-	useSuggestionsList();
+	useUsersList();
+
+const {
+	productsList,
+	loader: prodLoader,
+	errorMessage: prodError,
+	handleSearch: prodSearch,
+	selectedList: selProdList,
+	MIN_SEARCH: prodMinSearch
+} = useProductsList();
 </script>
 
 <style lang="scss" scoped>

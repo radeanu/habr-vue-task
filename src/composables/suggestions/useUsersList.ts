@@ -6,7 +6,7 @@ import { useUserDto } from '@/composables/suggestions/useUserDto';
 import * as apiService from '@/common/api.services';
 import type { UserOption, ApiUserOption } from '@/common/model.types';
 
-export function useSuggestionsList() {
+export function useUsersList() {
 	const MIN_SEARCH = 3;
 	const errorMessage = ref<string>();
 	const usersList = ref<UserOption[]>([]);
