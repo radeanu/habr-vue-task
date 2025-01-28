@@ -54,7 +54,7 @@
 						Загрузка...
 					</span>
 					<span v-else-if="!productsList.length">
-						{{ errorMessage ?? 'Ничего не найдено' }}
+						{{ prodError ?? 'Ничего не найдено' }}
 					</span>
 				</div>
 			</template>

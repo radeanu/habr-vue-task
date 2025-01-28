@@ -20,9 +20,11 @@ export default defineConfigWithVueTs(
 	{
 		rules: {
 			'no-debugger': 'off',
-			'typescript-eslint/no-unused-vars': 'warn',
+			'no-unused-vars': 'warn',
 			'no-console':
-				process.env.NODE_ENV !== 'development' ? ['warn', { allow: ['error'] }] : 'off',
+				process.env.NODE_ENV !== 'development'
+					? ['warn', { allow: ['error'] }]
+					: 'off',
 			'vue/max-attributes-per-line': [
 				'warn',
 				{

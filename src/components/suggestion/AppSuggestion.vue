@@ -81,7 +81,7 @@ interface Props {
 	max?: number;
 	label?: string;
 	trackBy?: keyof T;
-	denounce?: number;
+	debounce?: number;
 	minSearch?: number;
 	required?: boolean;
 	placeholder?: string;
@@ -97,7 +97,7 @@ const $emit = defineEmits<{
 
 const props = withDefaults(defineProps<Props>(), {
 	minSearch: 1,
-	denounce: 300,
+	debounce: 300,
 	placeholder: 'Поиск'
 });
 
@@ -105,7 +105,7 @@ const search = ref('');
 const isFocused = ref(false);
 
 const selectedList = defineModel<T[]>({ default: [], required: false });
-const debounceSearch = useDebounce(handleSearch, props.denounce);
+const debounceSearch = useDebounce(handleSearch, props.debounce);
 
 const formattedOptions = computed(() => {
 	return props.options.map((opt) => {
